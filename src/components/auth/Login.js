@@ -13,7 +13,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,35 +30,25 @@ const Login = () => {
     setError('');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock authentication - in real app, this would be an API call
-      if (formData.email === 'admin@sharebite.com' && formData.password === 'admin123') {
-        login({
-          id: 1,
-          email: formData.email,
-          name: 'Admin User',
-          role: 'admin'
-        });
-        navigate('/admin');
-      } else if (formData.email === 'user@sharebite.com' && formData.password === 'user123') {
-        login({
-          id: 2,
-          email: formData.email,
-          name: 'Regular User',
-          role: 'user'
-        });
-        navigate('/dashboard');
-      } else {
-        setError('Invalid email or password');
-      }
+      await login(formData.email, formData.password);
+      // Navigation will be handled after user state updates
     } catch (err) {
-      setError('An error occurred during login');
+      setError('Invalid email or password');
     } finally {
       setLoading(false);
     }
   };
+
+  // Redirect after login based on user role
+  React.useEffect(() => {
+    if (user && user.role) {
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <div className="auth-container">
@@ -76,7 +66,7 @@ const Login = () => {
           
           <div className="form-group">
             <div className="input-wrapper">
-              <FaEnvelope className="input-icon" />
+              {/* <FaEnvelope className="input-icon" /> */}
               <input
                 type="email"
                 name="email"
@@ -90,7 +80,7 @@ const Login = () => {
           
           <div className="form-group">
             <div className="input-wrapper">
-              <FaLock className="input-icon" />
+              {/* <FaLock className="input-icon" /> */}
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -127,11 +117,7 @@ const Login = () => {
           </p>
         </div>
         
-        <div className="demo-credentials">
-          <h4>Demo Credentials:</h4>
-          <p><strong>Admin:</strong> admin@sharebite.com / admin123</p>
-          <p><strong>User:</strong> user@sharebite.com / user123</p>
-        </div>
+        
       </div>
     </div>
   );

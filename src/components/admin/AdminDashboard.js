@@ -96,19 +96,19 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleAddSampleData = async () => {
-    if (window.confirm('This will add sample food data to Firebase. Continue?')) {
-      try {
-        setAddingSampleData(true);
-        await addSampleData();
-        await loadFoodItems(); // Reload data to show new items
-      } catch (err) {
-        console.error('Error adding sample data:', err);
-      } finally {
-        setAddingSampleData(false);
-      }
-    }
-  };
+  // const handleAddSampleData = async () => {
+  //   if (window.confirm('This will add sample food data to Firebase. Continue?')) {
+  //     try {
+  //       setAddingSampleData(true);
+  //       await addSampleData();
+  //       await loadFoodItems(); // Reload data to show new items
+  //     } catch (err) {
+  //       console.error('Error adding sample data:', err);
+  //     } finally {
+  //       setAddingSampleData(false);
+  //     }
+  //   }
+  // };
 
   const handleTestConnection = async () => {
     setTestingConnection(true);
@@ -206,14 +206,14 @@ const AdminDashboard = () => {
               Add New Listing
             </button>
             
-            <button 
+            {/* <button 
               className="sample-data-btn"
               onClick={handleAddSampleData}
               disabled={addingSampleData}
             >
               <FaDatabase />
               {addingSampleData ? 'Adding...' : 'Add Sample Data'}
-            </button>
+            </button> */}
             
             <button 
               className="test-btn"

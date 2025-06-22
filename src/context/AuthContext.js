@@ -1,4 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth, db } from '../firebase/config';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -16,32 +24,56 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user data on app load
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setUser(userData);
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Fetch user info from Firestore
+        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+        if (userDoc.exists()) {
+          setUser({ id: firebaseUser.uid, ...userDoc.data() });
+        } else {
+          setUser({ id: firebaseUser.uid, email: firebaseUser.email });
+        }
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(userData));
+  // Signup with email, password, name, and role
+  const signup = async (name, email, password, role) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Store extra info in Firestore
+    await setDoc(doc(db, 'users', userCredential.user.uid), {
+      name,
+      email,
+      role
+    });
+    // User state will be set by onAuthStateChanged
   };
 
-  const logout = () => {
+  // Login with email and password
+  const login = async (email, password) => {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // User state will be set by onAuthStateChanged
+    return userCredential;
+  };
+
+  // Logout
+  const logout = async () => {
+    await signOut(auth);
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
   };
 
   const value = {
     user,
     isAuthenticated,
     loading,
+    signup,
     login,
     logout
   };

@@ -76,22 +76,22 @@ const sampleFoodData = [
 ];
 
 // Function to add sample data to Firebase
-export const addSampleData = async () => {
-  try {
-    console.log('Adding sample data to Firebase...');
+// export const addSampleData = async () => {
+//   try {
+//     console.log('Adding sample data to Firebase...');
     
-    for (const foodItem of sampleFoodData) {
-      await addFoodItem(foodItem);
-      console.log(`Added: ${foodItem.name}`);
-    }
+//     for (const foodItem of sampleFoodData) {
+//       await addFoodItem(foodItem);
+//       console.log(`Added: ${foodItem.name}`);
+//     }
     
-    console.log('Sample data added successfully!');
-    alert('Sample data has been added to Firebase!');
-  } catch (error) {
-    console.error('Error adding sample data:', error);
-    alert('Failed to add sample data. Please check the console for details.');
-  }
-};
+//     console.log('Sample data added successfully!');
+//     alert('Sample data has been added to Firebase!');
+//   } catch (error) {
+//     console.error('Error adding sample data:', error);
+//     alert('Failed to add sample data. Please check the console for details.');
+//   }
+// };
 
 // Function to check if sample data exists (you can call this to avoid duplicates)
 export const checkSampleDataExists = async () => {

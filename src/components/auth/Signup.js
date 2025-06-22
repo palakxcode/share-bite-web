@@ -17,7 +17,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useAuth();
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -47,21 +47,10 @@ const Signup = () => {
     }
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock registration - in real app, this would be an API call
-      const newUser = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        role: formData.role
-      };
-      
-      login(newUser);
+      await signup(formData.name, formData.email, formData.password, formData.role);
       navigate(formData.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
-      setError('An error occurred during registration');
+      setError(err.message || 'An error occurred during registration');
     } finally {
       setLoading(false);
     }
@@ -168,7 +157,7 @@ const Signup = () => {
                     Find & claim surplus food
                   </span>
                 </label>
-                <label className="role-option">
+                {/* <label className="role-option">
                   <input
                     type="radio"
                     name="role"
@@ -180,7 +169,7 @@ const Signup = () => {
                     <FaBuilding />
                     Add & manage food listings
                   </span>
-                </label>
+                </label> */}
               </div>
             </div>
           </div>
